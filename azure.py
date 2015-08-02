@@ -4,6 +4,7 @@ import sys
 import tkFileDialog
 import getpass
 import telnetlib
+import pexpect
 
 #Implement this http://askubuntu.com/questions/52138/how-do-i-change-the-icon-for-a-particular-file-type
 global identity
@@ -60,10 +61,10 @@ ipdb = [
 
 def menu ():
     print 'Select from the following options:\n'
-    print ' ) Service Status'
+    print '1) Status Screen'
     print ' ) Service Control' # Todd is doing this one
     print '3) Keychain'
-    print ' ) Diagnostics'
+    print '4) Diagnostics'
     print '5) Cryptography'
     print ' ) Services'
     print '7) Lookup a device'
@@ -76,13 +77,13 @@ def menu ():
 
 def action (menuchoice):
     if menuchoice == '1':
-        assetstatus ()
+        assetmonitor ()
     elif menuchoice == '2':
         vmcontrol ()
     elif menuchoice == '3':
         keymenu ()
     elif menuchoice == '4':
-        ping (raw_input('Input your target IP\n'),'eth0')
+        diags ()
     elif menuchoice == '5':
         crypto ()
     elif menuchoice == '6':
@@ -98,6 +99,31 @@ def action (menuchoice):
     else:
         os.system("clear")
         print "That wasn't a command, try again.\n"
+        
+def assetmonitor(): #Here Randy
+    assetlist = sshlist('syndicasia','10.0.1.246', '~/assets.txt')
+    print assetlist
+    
+def sshinit(uname,ipaddress):
+    asstat = pexpect.spawn("ssh %s@%s" %(uname,ipaddress))
+    i = asstat.expect(['No route to host', 'synprac'])
+    if i == 0:
+        print ('Network connectivity issue!')
+        asstat.kill(0)
+    elif i == 1:
+        return asstat
+    
+def sshlist(uname,ipaddress,filepath):
+    session = sshinit(uname, ipaddress)
+    session.expect("$")
+    session.sendline("cat %s" %filepath)
+    session.expect('\x1b')
+    filecat = session.before.splitlines()
+    del filecat[0]
+    for n in xrange(len(filecat)):
+        filecat[n] = filecat[n].split('|')
+    return filecat
+
         
 def assetstatus ():
     os.system("clear")
