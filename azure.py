@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 import os
+import re
 import sys
+import time
 import tkFileDialog
 import getpass
 import telnetlib
 import pexpect
+from threading import Thread
 
 #Implement this http://askubuntu.com/questions/52138/how-do-i-change-the-icon-for-a-particular-file-type
 global identity
@@ -59,6 +62,48 @@ ipdb = [
     [44, 's', 't', 'street', '192.168.36.18', '192.169.0.114'],
 ]
 
+nameMap =  {'ANGEL'   : 0,
+	    'BROCK'   : 1,
+	    'DORY'    : 2,
+	    'ICEMAN'  : 3,
+	    'JORGE'   : 4,
+	    'JAMES'   : 5,
+	    'KAGE'    : 6,
+	    'KRONK'   : 7,
+	    'OSO'     : 8,
+	    'REX'     : 9,
+	    'ZESU'    : 10,
+	    'ZUKO'    : 11,
+	    'STOMPER1': 12,
+	    'STOMPER2': 13,
+	    'SPRITE1' : 14,
+	    'SPRITE2' : 15,
+	    'SPRITE3' : 16,
+	    'SABRE1'  : 17,
+	    'SABRE2'  : 18}
+nameList = []
+
+for i in range(0, len(nameMap)):
+    nameList.append([])
+
+logArray = []
+
+for i in range(0, len(nameMap)):
+    logArray.append([])
+
+gridHeight = '50'
+
+CN_array = ['','','','','']
+HB_array = ['','','','','']
+SS_array = ['','','','','']
+KK_array = ['','','','','']
+
+SYN_array = []
+SYN_array.append(CN_array)
+SYN_array.append(HB_array)
+SYN_array.append(SS_array)
+SYN_array.append(KK_array)
+
 def menu ():
     print 'Select from the following options:\n'
     print '1) Status Screen'
@@ -102,8 +147,375 @@ def action (menuchoice):
         
 def assetmonitor(): #Here Randy
     assetlist = sshlist('syndicasia','10.0.1.246', '~/assets.txt')
-    print assetlist
-    
+
+    class bcolors:
+	HEADER = '\033[95m'
+	OKBLUE = '\033[94m'
+	OKGREEN = '\033[92m'
+	WARNING = '\033[93m'
+	FAIL = '\033[91m'
+	ENDC = '\033[0m'
+	BOLD = '\033[1m'
+	UNDERLINE = '\033[4m'
+
+    def printTerminal():
+
+	global gridHeight
+	global SYN_array
+	global logArray
+
+	sys.stdout.write('\033['+gridHeight+'A')
+	sys.stdout.write('\r \033[K \r')
+	sys.stdout.flush()
+
+
+
+	sys.stdout.write('CALLSIGN | TIME     | ACTIVITY\n'
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'ANGEL    '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'BROCK    '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'DORY     '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'ICEMAN   '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'JORGE    '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'JAMES    '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'KAGE     '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'KRONK    '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'OSO      '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'REX      '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'ZESU     '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'ZUKO     '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+'STOMPER  |\n'
+			+'\r \033[K \r'
+
+			+bcolors.OKBLUE+'1        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'2        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+'SPRITE   |\n'
+			+'\r \033[K \r'
+
+			+bcolors.OKBLUE+'1        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'2        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'A        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'B        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'SABRE    |\n'
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'A        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n'
+
+			+'\r \033[K \r'
+			+bcolors.OKBLUE+'B        '
+			+bcolors.ENDC   +'| '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][0]
+			+bcolors.ENDC   +'     | '
+			+bcolors.OKBLUE
+			+logArray[nameMap['ANGEL']][1]
+			+bcolors.ENDC   +'| \n')
+	sys.stdout.write('\n\n')
+
+	sys.stdout.write('     | '
+			+bcolors.OKBLUE+'HTTP  '+bcolors.ENDC+'| '
+			+bcolors.OKBLUE+'HTTPS '+bcolors.ENDC+'| '
+			+bcolors.OKBLUE+'SSH   '+bcolors.ENDC+'| '
+			+bcolors.OKBLUE+'FTP   '+bcolors.ENDC+'| '
+			+bcolors.OKBLUE+'PING  '+bcolors.ENDC+'|\n')
+	sys.stdout.write('\r \033[K \r')
+
+	sys.stdout.write(bcolors.OKBLUE+'CN   '
+			+bcolors.ENDC   +'| '
+			+SYN_array[0][0]+'  | '
+			+SYN_array[0][1]+'  | '
+			+SYN_array[0][2]+'  | '
+			+SYN_array[0][3]+'  | '
+			+SYN_array[0][1]+'  |\n')
+	sys.stdout.write('\r \033[K \r')
+
+	sys.stdout.write(bcolors.OKBLUE+'HB   '
+			+bcolors.ENDC   +'| '
+			+SYN_array[1][0]+'  | '
+			+SYN_array[1][1]+'  | '
+			+SYN_array[1][2]+'  | '
+			+SYN_array[1][3]+'  | '
+			+SYN_array[0][1]+'  |\n')
+	sys.stdout.write('\r \033[K \r')
+
+	sys.stdout.write(bcolors.OKBLUE+'SS   '
+			+bcolors.ENDC   +'| '
+			+SYN_array[2][0]+'  | '
+			+SYN_array[2][1]+'  | '
+			+SYN_array[2][2]+'  | '
+			+SYN_array[2][3]+'  | '+SYN_array[0][1]+'  |\n')
+	sys.stdout.write('\r \033[K \r')
+
+	sys.stdout.write(bcolors.OKBLUE+'KK   '
+			+bcolors.ENDC     +'| '
+			+SYN_array[3][0]+'  | '
+			+SYN_array[3][1]+'  | '
+			+SYN_array[3][2]+'  | '
+			+SYN_array[3][3]+'  | '
+			+SYN_array[0][1]+'  |\n')
+
+	sys.stdout.write('\r \033[K \r')
+
+
+	sys.stdout.flush()
+
+    def activityUpdate():
+
+	global logArray
+
+	for i in range(0, len(assetlist)):
+	    nameList[nameMap[assetlist[i][0]]].append(str(assetlist[i][1]+'-'+assetlist[i][2]))
+
+	for i in range(0, len(logArray)):
+	    if len(nameList[i]) > 0:
+		logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[0])
+		logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[1])
+
+
+    def serviceUpdate(team):
+	
+	global gridHeight
+	global SYN_array
+
+	IP = '172.16.2.85'
+
+	while(1):
+	    for service in range(0, len(SYN_array[team])):
+		check = os.popen('ping -c 1 -w 1 %s' %IP).read()
+		if '1 received' in check:
+		    SYN_array[team][service] = bcolors.OKGREEN+re.split('time=',check)[1][1:5]+bcolors.ENDC
+		else:
+		    SYN_array[team][service] = bcolors.FAIL+'----'+bcolors.ENDC
+	    
+	    time.sleep(1)
+
+
+    os.system('setterm -cursor off')
+
+    newThread = Thread(target = activityUpdate, args = ())
+    newThread.daemon = True
+    newThread.start()
+    newThread.join()
+
+    for i in range(0, len(SYN_array)):
+	newThread = Thread(target = serviceUpdate, args = (i,))
+	newThread.daemon = True
+	newThread.start()
+
+    while(1):
+	try:
+	    time.sleep(1)
+	    printTerminal()
+	except KeyboardInterrupt:
+	    os.system('setterm -cursor on')
+	    exit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def sshinit(uname,ipaddress):
     asstat = pexpect.spawn("ssh %s@%s" %(uname,ipaddress))
     i = asstat.expect(['No route to host', 'synprac'])
