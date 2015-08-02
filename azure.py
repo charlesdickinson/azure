@@ -69,7 +69,7 @@ def menu ():
     print ' ) Services'
     print '7) Lookup a device'
     print '8) Fix routing tables'
-    print '9) Authenticate'
+    print '9) Miscellaneous'
     print 'q) Quit this program\n'
     menu = raw_input('Enter your selection: ')
     print '\n'
@@ -93,12 +93,30 @@ def action (menuchoice):
     elif menuchoice == '8':
         routings ()
     elif menuchoice == '9':
-        authenticate ()
+        setup ()
     elif menuchoice == 'q':
         print 'Glory to Syndicasia!'
     else:
         os.system("clear")
         print "That wasn't a command, try again.\n"
+        
+def setup():
+    os.system("clear")
+    print 'Select from the following options:'
+    print '1) Add azure as a bash command'
+    print '2) Transfer SSH credentials'
+    print '3) Bulk encrypt a file'
+    print '4) Update your device tables'
+    choice = raw_input("Enter your selection: ")
+    if choice == '1':
+        os.system("touch azure")
+        os.system("echo '#!/bin/bash' >> azure")
+        wd = os.popen("pwd").read().replace('\n','')
+        os.system("echo 'python %s/azure.py' >> azure" %wd)
+        os.system("sudo rm /usr/bin/azure")
+        os.system("sudo mv azure /usr/bin/")
+        os.system("sudo chmod +x /usr/bin/azure")
+        os.system("clear")
         
 def assetmonitor(): #Here Randy
     assetlist = sshlist('syndicasia','10.0.1.246', '~/assets.txt')
