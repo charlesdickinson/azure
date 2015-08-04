@@ -8,58 +8,18 @@ import getpass
 import telnetlib
 import pexpect
 from threading import Thread
+import pxssh
 
-#Implement this http://askubuntu.com/questions/52138/how-do-i-change-the-icon-for-a-particular-file-type
+#Implement this http://askubunt.com/questions/52138/how-do-i-change-the-icon-for-a-particular-file-type
 global identity
 global ipdb
 global authenticated
 authenticated = False
+global flag
+flag = 'Syndicasia'
 
 ipdb = [
-    [1, 'c', 'r', 'crone', '192.168.24.1', '192.169.0.1'],
-    [2, 'c', 'b', 'cobra', '192.168.24.2', '192.169.0.2'],
-    [3, 'c', 'w', 'coward', '192.168.24.10', '192.169.0.10'],
-    [4, 'c', 'ws', 'cowards', '192.168.24.11', '192.169.0.11'],
-    [5, 'c', 's', 'costume', '192.168.24.12', '192.169.0.12'],
-    [6, 'c', 'f', 'coffee', '192.168.24.13', '192.169.0.13'],
-    [7, 'c', 'e', 'certain', '192.168.24.14', '192.169.0.14'],
-    [8, 'c', 'i', 'cinema', '192.168.24.15', '192.169.0.15'],
-    [9, 'c', 'd', 'codify', '192.168.24.16', '192.169.0.16'],
-    [10, 'c', 'c', 'coconut', '192.168.24.17', '192.169.0.17'],
-    [11, 'c', 't', 'cattle', '192.168.24.18', '192.169.0.18'],
-    [12, 'h', 'r', 'hare', '192.168.40.1', '192.169.0.33'],
-    [13, 'h', 'b', 'hobbit', '192.168.40.2', '192.169.0.34'],
-    [14, 'h', 'w', 'hawk', '192.168.40.10', '192.169.0.42'],
-    [15, 'h', 'ws', 'hawks', '192.168.40.11', '192.169.0.43'],
-    [16, 'h', 's', 'hash', '192.168.40.12', '192.169.0.44'],
-    [17, 'h', 'f', 'hefty', '192.168.40.13', '192.169.0.45'],
-    [18, 'h', 'e', 'hen', '192.168.40.14', '192.169.0.46'],
-    [19, 'h', 'i', 'hippo', '192.168.40.15', '192.169.0.47'],
-    [20, 'h', 'c', 'hooch', '192.168.40.16', '192.169.0.48'],
-    [21, 'h', 'd', 'hodor', '192.168.40.17', '192.169.0.49'],
-    [22, 'h', 't', 'hat', '192.168.40.18', '192.169.0.50'],
-    [23, 'k', 'r', 'krazy', '192.168.48.1', '192.169.0.65'],
-    [24, 'k', 'b', 'kubrick', '192.168.48.2', '192.169.0.66'],
-    [25, 'k', 'w', 'kwik', '192.168.48.10', '192.169.0.74'],
-    [26, 'k', 'ws', 'kwiks', '192.168.48.11', '192.169.0.75'],
-    [27, 'k', 's', 'kash', '192.168.48.12', '192.169.0.76'],
-    [28, 'k', 'f', 'kefuffle', '192.168.48.13', '192.169.0.77'],
-    [29, 'k', 'e', 'kent', '192.168.48.14', '192.169.0.78'],
-    [30, 'k', 'i', 'king', '192.168.48.15', '192.169.0.79'],
-    [31, 'k', 'c', 'kockles', '192.168.48.16', '192.169.0.80'],
-    [32, 'k', 'd', 'kodeon', '192.168.48.17', '192.169.0.81'],
-    [33, 'k', 't', 'kottage', '192.168.48.18', '192.169.0.82'],
-    [34, 's', 'r', 'sorry', '192.168.36.1', '192.169.0.97'],
-    [35, 's', 'b', 'sob', '192.168.36.2', '192.169.0.98'],
-    [36, 's', 'w', 'swing', '192.168.36.10', '192.169.0.106'],
-    [37, 's', 'ws', 'swings', '192.168.36.11', '192.169.0.107'],
-    [38, 's', 's', 'sustain', '192.168.36.12', '192.169.0.108'],
-    [39, 's', 'f', 'soft', '192.168.36.13', '192.169.0.109'],
-    [40, 's', 'e', 'seat', '192.168.36.14', '192.169.0.110'],
-    [41, 's', 'i', 'sing', '192.168.36.15', '192.169.0.111'],
-    [42, 's', 'c', 'scissor', '192.168.36.16', '192.169.0.112'],
-    [43, 's', 'd', 'soda', '192.168.36.17', '192.169.0.113'],
-    [44, 's', 't', 'street', '192.168.36.18', '192.169.0.114'],
+    ['b', 'f', 'baffle', '192.168.56.2']
 ]
 
 nameSet = ['ANGEL',   
@@ -124,14 +84,13 @@ for i in range(0, 4):
 def menu ():
     print 'Select from the following options:\n'
     print '1) Status Screen'
-    print ' ) Service Control' # Todd is doing this one
+    print ':( Service Control' # Todd is doing this one
     print '3) Keychain'
-    print '4) Diagnostics'
-    print '5) Cryptography'
-    print ' ) Services'
-    print '7) Lookup a device'
-    print '8) Fix routing tables'
-    print '9) Miscellaneous'
+    print '4) Encryption'
+    print '5) Services'
+    print '6) Network Assets'
+    print '7) Fix routing tables'
+    print '8) Miscellaneous'
     print 'q) Quit this program\n'
     menu = raw_input('Enter your selection: ')
     print '\n'
@@ -145,16 +104,14 @@ def action (menuchoice):
     elif menuchoice == '3':
         keymenu ()
     elif menuchoice == '4':
-        diags ()
-    elif menuchoice == '5':
         crypto ()
-    elif menuchoice == '6':
+    elif menuchoice == '5':
         services ()
-    elif menuchoice == '7':
+    elif menuchoice == '6':
         lookup ()
-    elif menuchoice == '8':
+    elif menuchoice == '7':
         routings ()
-    elif menuchoice == '9':
+    elif menuchoice == '8':
         setup ()
     elif menuchoice == 'q':
         print 'Glory to Syndicasia!'
@@ -166,8 +123,8 @@ def setup():
     os.system("clear")
     print 'Select from the following options:'
     print '1) Add azure as a bash command'
-    print '2) Transfer SSH credentials'
-    print '3) Bulk encrypt a file'
+    print ':( Transfer SSH credentials'
+    print ':( Bulk encrypt a file'
     print '4) Update your device tables'
     choice = raw_input("Enter your selection: ")
     if choice == '1':
@@ -179,10 +136,50 @@ def setup():
         os.system("sudo mv azure /usr/bin/")
         os.system("sudo chmod +x /usr/bin/azure")
         os.system("clear")
+    elif choice == '2':
+        print 'Hokay'
+    elif choice == '3':
+        print 'Hokay'       
+    elif choice == '4':
+        ipupdate()
+        
+def ipupdate():
+    global ipdb
+    try:
+        ipdb = sshlist('baffle', "ipdb.txt")
+        print ipdb
+    except:
+        print '\nHad a bad time connecting, squire!\n'
+
+def unamelookup(service):
+    global authenticated
+    global keychain
+    if authenticated == False:
+        authenticate()
+    for n in xrange(len(keychain)):
+        if keychain[n][0] == service:
+            return keychain[n][1]
+    return False
+
+def iplookup(service):
+    global ipdb
+    for n in xrange(len(ipdb)):
+        if ipdb[n][2] == service:
+            return ipdb[n][3]
+    return False
+
+def pwdlookup(service):
+    global authenticated
+    global keychain
+    if authenticated == False:
+        authenticate()
+    for n in xrange(len(keychain)):
+        if keychain[n][0] == service:
+            return keychain[n][2]
+    return False
         
 def assetmonitor(): #Here Randy
-    #assetlist = sshlist('syndicasia','10.0.1.246', '~/assets.txt')
-    assetlist = [['ANGEL', '1030', 'killed three katz']]
+    assetlist = sshlist('baffle', '~/assets.txt')
 
     class bcolors:
 	HEADER    = '\033[95m'
@@ -356,54 +353,91 @@ def sshinit(uname,ipaddress):
     elif i == 1:
         return asstat
     
-def sshlist(uname,ipaddress,filepath):
-    session = sshinit(uname, ipaddress)
-    session.expect("$")
+def sshlist(service,filepath):
+    session = pxssh.pxssh()
+    session.login(iplookup(service), unamelookup(service), pwdlookup(service))
     session.sendline("cat %s" %filepath)
-    session.expect('\x1b')
+    session.prompt()
     filecat = session.before.splitlines()
     del filecat[0]
     for n in xrange(len(filecat)):
         filecat[n] = filecat[n].split('|')
     return filecat
-
         
-def assetstatus ():
-    os.system("clear")
-    print 'Select from the following options:'
-    print '1) Monitor assets on default settings'
-    print '2) Aggressively monitor assets :('
-    print '3) Query a specific asset'
-    print '4) Perform a generic flag check'
-    choice = raw_input('Enter your selection: ')
-    if choice == '1':
-        print("This doesn't work yet. It will be amazing though when it does.")
-    if choice == '2':
-        print("Coming soon. Also, please never do this. It's super aggressive!")
-    if choice == '3':
-        print iplookup(raw_input("Enter a code (cw, ht, etc) or a codename (coward, hat, etc): ")) #Comments?
-        
-def pingcheck (target):
-    check = os.popen('ping -c 1 %s' %target).read()
-    if '1 received' in check:
-        return True
-    else:
+def pingcheck (service):
+    try:
+        check = os.popen('ping -c 1 %s' %iplookup(service)).read()
+        if '1 received' in check:
+            return True
+        else:
+            return False
+    except:
         return False
 
-def webcheck (target, team):
-    tn = telnetlib.Telnet(target, 80)
-    tn.read_until("'^]'.")
-    tn.write('GET')
-    return flaghunt(tn.read_all())
+def webcheck (service):
+    try:
+        tn = telnetlib.Telnet(iplookup(service), 80)
+        tn.read_until("'^]'.")
+        tn.write('GET')
+        if flag in tn.read_all:
+            return True
+        else:
+            return False
+    except:
+        return False
 
-def iplookup (code):
+def sshcheck (service):
+    try:
+        session = pexpect.spawn("ssh %s@%s" %(unamelookup(service),iplookup(service)))
+        i = session.expect(["assword", "EDCSA", "route to host", "timed out", flag])
+        if i == 0:
+            session.sendline(pwdlookup(service))
+            j = session.expect([flag, "wrong"])
+            if j == 0:
+                return True
+            elif j == 1:
+                return False
+        elif i == 1:
+            session.sendline("yes")
+            j = session.expect(["assword", flag])
+            if j == 0:
+                session.sendline(pwdlookup(service))
+            elif j == 1:
+                return True    
+        elif i == 2:
+            print "You not connected properly buddy"
+            return False
+        elif i == 3:
+            print "So I reckon the machine is there, it's just not responding"
+            return False
+        elif i == 4:
+            return True
+    except:
+        return False
+    
+def ftpcheck (service):
+    try:
+        session = pexpect.spawn("ftp %s" %iplookup(service))
+        session.expect('ame .*: ')
+        session.sendline(unamelookup(service))
+        session.expect('assword:')
+        session.sendline(pwdlookup(service))
+        session.expect('ftp>')
+        if flag in session.before:
+            return True
+        else:
+            return False
+    except:
+        return False
+    
+def ipfind (code):
     code = code.lower()
     global ipdb
     for n in xrange(len(ipdb)):
-        if ipdb[n][3] == code:
-            return ipdb[n][0]
-        elif ipdb[n][1] + ipdb[n][2] == code:
-            return ipdb[n][0]
+        if ipdb[n][2] == code:
+            return n
+        elif ipdb[n][0] + ipdb[n][1] == code:
+            return n
     return ('fail')
     
 def vmcontrol ():
@@ -421,7 +455,7 @@ def keymenu ():
     print "3) Add a password"
     print "4) Add a generated password"
     print "5) Create your keychain"
-    print "d) Delete a password"
+    print "6) Distribute keychains"
     print "x) Wipe your keychain"
     choice = raw_input("Enter your selection: ")
     if choice == '1':
@@ -475,7 +509,14 @@ def keymenu ():
             os.system("openssl smime -encrypt -binary -aes-256-cbc -in ~/.ssh/keychain -out ~/.ssh/keychain_%s.blu -outform DER ~/.ssh/pubkeys/%s.pem" %(identity, identity))
             os.system("rm ~/.ssh/keychain")
             keychain = []
-    elif choice == 'd':
+    elif choice == '6':
+        decrypt("~/.ssh/keychain_%s.blu" %identity)
+        pubkeys = os.popen('ls ~/.ssh/pubkeys').read().replace('.pem','').splitlines()
+        os.system("mkdir ~/.ssh/keydis/")
+        for n in xrange(len(pubkeys)):
+            os.system("openssl smime -encrypt -binary -aes-256-cbc -in ~/.ssh/keychain -out ~/.ssh/keydis/keychain_%s.blu -outform DER ~/.ssh/pubkeys/%s.pem" %(pubkeys[n], pubkeys[n]))
+        
+        
         return
     elif choice == 'x':
         print("Warning: This shall delete your keychain. You must have a really good reason to do this!")
@@ -490,11 +531,7 @@ def keymenu ():
             print("You messed that up. Learn to type!\n")
     else:
         print "That wasn't a valid option..."
-    
-    
-def sshcheck (target): #incomplete
-    os.system("ssh ****@%s" % target)
-    
+      
 def ping (target, interface):
     os.system("clear")
     os.system ("ping -c 5 -I %s %s" % (interface, target))
@@ -577,7 +614,25 @@ def decrypt (filepath):
     
 def services ():
     os.system("clear")
-    print 'Services like FTP, Web, IRC and boring stuff like that\n'
+    print 'Select a type of service below:'
+    print '1) FTP'
+    print '2) SSH'
+    print '3) Mumble'
+    print '4) IRC'
+    choice = raw_input("Enter your selection: ")
+    if choice == '1':
+        os.system("nautilus sftp://%s@%s" %(unamelookup('baffle'),iplookup('baffle')))
+    elif choice == '2':
+        target = raw_input("Enter your target (ie. baffle): ")
+        print "Press Ctrl + D to return. Sudo password is " + pwdlookup(target)
+        session = pexpect.spawn('ssh %s@%s' %(unamelookup(target), iplookup(target)))
+        session.interact()
+    elif choice == '3':
+        os.system("mumble &")
+    elif choice == '4':
+        os.system("xchat &")
+    
+    
     
 def lookup ():
     global ipdb
@@ -591,19 +646,20 @@ def lookup ():
         print("Flight      | Service     | Codename    | IP Address")
         print("----------------------------------------------------")
         for n in xrange(len(ipdb)):
-            print flightid(ipdb[n][1]) + '| ' + servid(ipdb[n][2]) + '| ' + ipdb[n][3].ljust(12) + '| ' + ipdb[n][4]
+            print flightid(ipdb[n][0]) + '| ' + servid(ipdb[n][1]) + '| ' + ipdb[n][2].ljust(12) + '| ' + ipdb[n][3]
     elif choice == '2':
         print("Which flight?")
         print("c) Centuriones Notitia")
         print("h) Haxtr33tboyz")
         print("s) Shell Shockers")
         print("k) Kairos Kode")
+        print("b) AQUANET")
         flchoice = raw_input('Enter your selection: ')
         print("Service     | Codename    | IP Address")
         print("--------------------------------------")
         for n in xrange(len(ipdb)):
-            if ipdb[n][1] == flchoice:
-                print servid(ipdb[n][2]) + '| ' + ipdb[n][3].ljust(12) + '| ' + ipdb[n][4]
+            if ipdb[n][0] == flchoice:
+                print servid(ipdb[n][1]) + '| ' + ipdb[n][2].ljust(12) + '| ' + ipdb[n][3]
     elif choice == '3':
         print("Which service?")
         print("r)  Router")
@@ -621,8 +677,8 @@ def lookup ():
         print("Flight      | Codename    | IP Address")
         print("--------------------------------------")
         for n in xrange(len(ipdb)):
-            if ipdb[n][2] == svchoice:
-                print flightid(ipdb[n][1]) + '| ' + ipdb[n][3].ljust(12) + '| ' + ipdb[n][4]        
+            if ipdb[n][1] == svchoice:
+                print flightid(ipdb[n][0]) + '| ' + ipdb[n][2].ljust(12) + '| ' + ipdb[n][3]        
         
 def flaghunt (string):
     if 'SA-R2-Shell' in string:
@@ -644,7 +700,9 @@ def flightid(string):
     elif string == 's':
         return 'SShockers   '
     elif string == 'k':
-        return 'Kairos      '
+        return 'Kairos Kode '
+    elif string == 'b':
+        return 'AQUANET     '
     
 def servid(string):
     if string == 'r':
