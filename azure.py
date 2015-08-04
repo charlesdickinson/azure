@@ -119,11 +119,10 @@ def pwdlookup(service):
 def assetmonitor(): #Here Randy
     assetlist = sshlist('baffle', '~/assets.txt')
     print assetlist
-    print 'Placeholders before Randy merges'
-    print pingcheck('baffle')
-    print webcheck('baffle')
-    print sshcheck('baffle')
-    
+    print "Ping: " + str(pingcheck('baffle'))
+    print "Web:  " + str(webcheck('baffle'))
+    print "SSH:  " + str(sshcheck('baffle'))
+    print "FTP:  " + str(ftpcheck('baffle'))
     
 def sshlist(service,filepath):
     session = pxssh.pxssh()
@@ -185,8 +184,23 @@ def sshcheck (service):
         elif i == 4:
             return True
     except:
-        return False   
-                
+        return False
+    
+def ftpcheck (service):
+    try:
+        session = pexpect.spawn("ftp %s" %iplookup(service))
+        session.expect('ame .*: ')
+        session.sendline(unamelookup(service))
+        session.expect('assword:')
+        session.sendline(pwdlookup(service))
+        session.expect('ftp>')
+        if flag in session.before:
+            return True
+        else:
+            return False
+    except:
+        return False
+    
 def ipfind (code):
     code = code.lower()
     global ipdb
