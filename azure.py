@@ -12,6 +12,8 @@ global identity
 global ipdb
 global authenticated
 authenticated = False
+global flag
+flag = 'Syndicasia'
 
 ipdb = [
     ['b', 'f', 'baffle', '192.168.56.2']
@@ -20,14 +22,13 @@ ipdb = [
 def menu ():
     print 'Select from the following options:\n'
     print '1) Status Screen'
-    print ' ) Service Control' # Todd is doing this one
+    print ':( Service Control' # Todd is doing this one
     print '3) Keychain'
-    print '4) Diagnostics'
-    print '5) Cryptography'
-    print ' ) Services'
-    print '7) Lookup a device'
-    print '8) Fix routing tables'
-    print '9) Miscellaneous'
+    print '4) Encryption'
+    print '5) Services'
+    print '6) Network Assets'
+    print '7) Fix routing tables'
+    print '8) Miscellaneous'
     print 'q) Quit this program\n'
     menu = raw_input('Enter your selection: ')
     print '\n'
@@ -41,16 +42,14 @@ def action (menuchoice):
     elif menuchoice == '3':
         keymenu ()
     elif menuchoice == '4':
-        diags ()
-    elif menuchoice == '5':
         crypto ()
-    elif menuchoice == '6':
+    elif menuchoice == '5':
         services ()
-    elif menuchoice == '7':
+    elif menuchoice == '6':
         lookup ()
-    elif menuchoice == '8':
+    elif menuchoice == '7':
         routings ()
-    elif menuchoice == '9':
+    elif menuchoice == '8':
         setup ()
     elif menuchoice == 'q':
         print 'Glory to Syndicasia!'
@@ -62,8 +61,8 @@ def setup():
     os.system("clear")
     print 'Select from the following options:'
     print '1) Add azure as a bash command'
-    print '2) Transfer SSH credentials'
-    print '3) Bulk encrypt a file'
+    print ':( Transfer SSH credentials'
+    print ':( Bulk encrypt a file'
     print '4) Update your device tables'
     choice = raw_input("Enter your selection: ")
     if choice == '1':
@@ -84,11 +83,11 @@ def setup():
         
 def ipupdate():
     global ipdb
-    #try:
-    ipdb = sshlist('baffle', "ipdb.txt")
-    print ipdb
-    #except:
-        #print '\nHad a bad time connecting, squire!\n'
+    try:
+        ipdb = sshlist('baffle', "ipdb.txt")
+        print ipdb
+    except:
+        print '\nHad a bad time connecting, squire!\n'
 
 def unamelookup(service):
     global authenticated
@@ -120,6 +119,11 @@ def pwdlookup(service):
 def assetmonitor(): #Here Randy
     assetlist = sshlist('baffle', '~/assets.txt')
     print assetlist
+    print 'Placeholders before Randy merges'
+    print pingcheck('baffle')
+    print webcheck('baffle')
+    print sshcheck('baffle')
+    
     
 def sshlist(service,filepath):
     session = pxssh.pxssh()
@@ -132,19 +136,57 @@ def sshlist(service,filepath):
         filecat[n] = filecat[n].split('|')
     return filecat
         
-def pingcheck (target):
-    check = os.popen('ping -c 1 %s' %target).read()
-    if '1 received' in check:
-        return True
-    else:
+def pingcheck (service):
+    try:
+        check = os.popen('ping -c 1 %s' %iplookup(service)).read()
+        if '1 received' in check:
+            return True
+        else:
+            return False
+    except:
         return False
 
-def webcheck (target, team):
-    tn = telnetlib.Telnet(target, 80)
-    tn.read_until("'^]'.")
-    tn.write('GET')
-    return flaghunt(tn.read_all())
+def webcheck (service):
+    try:
+        tn = telnetlib.Telnet(iplookup(service), 80)
+        tn.read_until("'^]'.")
+        tn.write('GET')
+        if flag in tn.read_all:
+            return True
+        else:
+            return False
+    except:
+        return False
 
+def sshcheck (service):
+    try:
+        session = pexpect.spawn("ssh %s@%s" %(unamelookup(service),iplookup(service)))
+        i = session.expect(["assword", "EDCSA", "route to host", "timed out", flag])
+        if i == 0:
+            session.sendline(pwdlookup(service))
+            j = session.expect([flag, "wrong"])
+            if j == 0:
+                return True
+            elif j == 1:
+                return False
+        elif i == 1:
+            session.sendline("yes")
+            j = session.expect(["assword", flag])
+            if j == 0:
+                session.sendline(pwdlookup(service))
+            elif j == 1:
+                return True    
+        elif i == 2:
+            print "You not connected properly buddy"
+            return False
+        elif i == 3:
+            print "So I reckon the machine is there, it's just not responding"
+            return False
+        elif i == 4:
+            return True
+    except:
+        return False   
+                
 def ipfind (code):
     code = code.lower()
     global ipdb
@@ -246,11 +288,7 @@ def keymenu ():
             print("You messed that up. Learn to type!\n")
     else:
         print "That wasn't a valid option..."
-    
-    
-def sshcheck (target): #incomplete
-    os.system("ssh ****@%s" % target)
-    
+      
 def ping (target, interface):
     os.system("clear")
     os.system ("ping -c 5 -I %s %s" % (interface, target))
