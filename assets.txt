@@ -1,0 +1,4 @@
+ANGEL|1030|Killed a man in self defence
+ZESU|1031|Stabbed to death in an international incident
+OSO|1032|Losing control of his troops
+STOMPER2|1033|Fell into a bear trap.
