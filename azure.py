@@ -131,22 +131,6 @@ def sshlist(service,filepath):
     for n in xrange(len(filecat)):
         filecat[n] = filecat[n].split('|')
     return filecat
-
-        
-def assetstatus ():
-    os.system("clear")
-    print 'Select from the following options:'
-    print '1) Monitor assets on default settings'
-    print '2) Aggressively monitor assets :('
-    print '3) Query a specific asset'
-    print '4) Perform a generic flag check'
-    choice = raw_input('Enter your selection: ')
-    if choice == '1':
-        print("This doesn't work yet. It will be amazing though when it does.")
-    if choice == '2':
-        print("Coming soon. Also, please never do this. It's super aggressive!")
-    if choice == '3':
-        print ipfind(raw_input("Enter a code (cw, ht, etc) or a codename (coward, hat, etc): ")) #Comments?
         
 def pingcheck (target):
     check = os.popen('ping -c 1 %s' %target).read()
@@ -186,7 +170,7 @@ def keymenu ():
     print "3) Add a password"
     print "4) Add a generated password"
     print "5) Create your keychain"
-    print "d) Delete a password"
+    print "6) Distribute keychains"
     print "x) Wipe your keychain"
     choice = raw_input("Enter your selection: ")
     if choice == '1':
@@ -240,7 +224,14 @@ def keymenu ():
             os.system("openssl smime -encrypt -binary -aes-256-cbc -in ~/.ssh/keychain -out ~/.ssh/keychain_%s.blu -outform DER ~/.ssh/pubkeys/%s.pem" %(identity, identity))
             os.system("rm ~/.ssh/keychain")
             keychain = []
-    elif choice == 'd':
+    elif choice == '6':
+        decrypt("~/.ssh/keychain_%s.blu" %identity)
+        pubkeys = os.popen('ls ~/.ssh/pubkeys').read().replace('.pem','').splitlines()
+        os.system("mkdir ~/.ssh/keydis/")
+        for n in xrange(len(pubkeys)):
+            os.system("openssl smime -encrypt -binary -aes-256-cbc -in ~/.ssh/keychain -out ~/.ssh/keydis/keychain_%s.blu -outform DER ~/.ssh/pubkeys/%s.pem" %(pubkeys[n], pubkeys[n]))
+        
+        
         return
     elif choice == 'x':
         print("Warning: This shall delete your keychain. You must have a really good reason to do this!")
