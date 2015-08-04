@@ -62,6 +62,26 @@ ipdb = [
     [44, 's', 't', 'street', '192.168.36.18', '192.169.0.114'],
 ]
 
+nameSet = ['ANGEL',   
+	   'BROCK',   
+	   'DORY',    
+	   'ICEMAN',  
+	   'JORGE',   
+	   'JAMES',   
+	   'KAGE',    
+	   'KRONK',   
+	   'OSO',     
+	   'REX',     
+	   'ZESU',    
+	   'ZUKO',    
+	   'STOMPER1',
+	   'STOMPER2',
+	   'SPRITE1', 
+	   'SPRITE2', 
+	   'SPRITE3', 
+	   'SABRE1',  
+	   'SABRE2']  
+
 nameMap =  {'ANGEL'   : 0,
 	    'BROCK'   : 1,
 	    'DORY'    : 2,
@@ -81,28 +101,25 @@ nameMap =  {'ANGEL'   : 0,
 	    'SPRITE3' : 16,
 	    'SABRE1'  : 17,
 	    'SABRE2'  : 18}
+
+gridHeight = '1000'
 nameList = []
 
 for i in range(0, len(nameMap)):
     nameList.append([])
 
 logArray = []
-
 for i in range(0, len(nameMap)):
     logArray.append([])
 
-gridHeight = '50'
+SYN_array_IP = []
+for i in range(0, 4):
+    SYN_array_IP.append(['','','','',''])
 
-CN_array = ['','','','','']
-HB_array = ['','','','','']
-SS_array = ['','','','','']
-KK_array = ['','','','','']
+SYN_array_ping = []
+for i in range(0, 4):
+    SYN_array_ping.append(['','','','',''])
 
-SYN_array = []
-SYN_array.append(CN_array)
-SYN_array.append(HB_array)
-SYN_array.append(SS_array)
-SYN_array.append(KK_array)
 
 def menu ():
     print 'Select from the following options:\n'
@@ -164,17 +181,41 @@ def setup():
         os.system("clear")
         
 def assetmonitor(): #Here Randy
-    assetlist = sshlist('syndicasia','10.0.1.246', '~/assets.txt')
+    #assetlist = sshlist('syndicasia','10.0.1.246', '~/assets.txt')
+    assetlist = [['ANGEL', '1030', 'killed three katz']]
 
     class bcolors:
-	HEADER = '\033[95m'
-	OKBLUE = '\033[94m'
-	OKGREEN = '\033[92m'
-	WARNING = '\033[93m'
-	FAIL = '\033[91m'
-	ENDC = '\033[0m'
-	BOLD = '\033[1m'
+	HEADER    = '\033[95m'
+	OKBLUE    = '\033[94m'
+	OKGREEN   = '\033[92m'
+	WARNING   = '\033[93m'
+	FAIL      = '\033[91m'
+	ENDC      = '\033[0m'
+	BOLD      = '\033[1m'
 	UNDERLINE = '\033[4m'
+
+    def printCallSign(buff):
+	temp = buff
+
+	for i in range(0, (9 - len(buff))):
+	    temp += ' '
+
+	if len(logArray[nameMap[buff]]) == 0:
+	    buffer0 = '    '
+	    buffer1 = ''
+	else:
+	    buffer0 = logArray[nameMap[buff]][0]
+	    buffer1 = logArray[nameMap[buff]][1]
+
+	sys.stdout.write('\r \033[K \r'
+			 +bcolors.OKBLUE+temp
+			 +bcolors.ENDC   +'| '
+			 +bcolors.OKBLUE
+			 +buffer0
+			 +bcolors.ENDC   +' | '
+			 +bcolors.OKBLUE
+			 +buffer1
+			 +bcolors.ENDC+'\n') 
 
     def printTerminal():
 
@@ -186,215 +227,13 @@ def assetmonitor(): #Here Randy
 	sys.stdout.write('\r \033[K \r')
 	sys.stdout.flush()
 
+	sys.stdout.write('CALLSIGN | TIME | ACTIVITY\n')
+
+	for i in range(0, len(nameSet)):
+
+	    printCallSign(nameSet[i])
 
 
-	sys.stdout.write('CALLSIGN | TIME     | ACTIVITY\n'
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'ANGEL    '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'BROCK    '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'DORY     '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'ICEMAN   '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'JORGE    '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'JAMES    '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'KAGE     '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'KRONK    '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'OSO      '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'REX      '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'ZESU     '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'ZUKO     '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+'STOMPER  |\n'
-			+'\r \033[K \r'
-
-			+bcolors.OKBLUE+'1        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'2        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+'SPRITE   |\n'
-			+'\r \033[K \r'
-
-			+bcolors.OKBLUE+'1        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'2        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'A        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'B        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'SABRE    |\n'
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'A        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n'
-
-			+'\r \033[K \r'
-			+bcolors.OKBLUE+'B        '
-			+bcolors.ENDC   +'| '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][0]
-			+bcolors.ENDC   +'     | '
-			+bcolors.OKBLUE
-			+logArray[nameMap['ANGEL']][1]
-			+bcolors.ENDC   +'| \n')
 	sys.stdout.write('\n\n')
 
 	sys.stdout.write('     | '
@@ -407,40 +246,40 @@ def assetmonitor(): #Here Randy
 
 	sys.stdout.write(bcolors.OKBLUE+'CN   '
 			+bcolors.ENDC   +'| '
-			+SYN_array[0][0]+'  | '
-			+SYN_array[0][1]+'  | '
-			+SYN_array[0][2]+'  | '
-			+SYN_array[0][3]+'  | '
-			+SYN_array[0][1]+'  |\n')
+			+SYN_array_ping[0][0]+'  | '
+			+SYN_array_ping[0][1]+'  | '
+			+SYN_array_ping[0][2]+'  | '
+			+SYN_array_ping[0][3]+'  | '
+			+SYN_array_ping[0][4]+'  |\n')
 	sys.stdout.write('\r \033[K \r')
 
 	sys.stdout.write(bcolors.OKBLUE+'HB   '
 			+bcolors.ENDC   +'| '
-			+SYN_array[1][0]+'  | '
-			+SYN_array[1][1]+'  | '
-			+SYN_array[1][2]+'  | '
-			+SYN_array[1][3]+'  | '
-			+SYN_array[0][1]+'  |\n')
+			+SYN_array_ping[1][0]+'  | '
+			+SYN_array_ping[1][1]+'  | '
+			+SYN_array_ping[1][2]+'  | '
+			+SYN_array_ping[1][3]+'  | '
+			+SYN_array_ping[0][4]+'  |\n')
 	sys.stdout.write('\r \033[K \r')
 
 	sys.stdout.write(bcolors.OKBLUE+'SS   '
 			+bcolors.ENDC   +'| '
-			+SYN_array[2][0]+'  | '
-			+SYN_array[2][1]+'  | '
-			+SYN_array[2][2]+'  | '
-			+SYN_array[2][3]+'  | '+SYN_array[0][1]+'  |\n')
+			+SYN_array_ping[2][0]+'  | '
+			+SYN_array_ping[2][1]+'  | '
+			+SYN_array_ping[2][2]+'  | '
+			+SYN_array_ping[2][3]+'  | '
+			+SYN_array_ping[0][4]+'  |\n')
 	sys.stdout.write('\r \033[K \r')
 
 	sys.stdout.write(bcolors.OKBLUE+'KK   '
 			+bcolors.ENDC     +'| '
-			+SYN_array[3][0]+'  | '
-			+SYN_array[3][1]+'  | '
-			+SYN_array[3][2]+'  | '
-			+SYN_array[3][3]+'  | '
-			+SYN_array[0][1]+'  |\n')
+			+SYN_array_ping[3][0]+'  | '
+			+SYN_array_ping[3][1]+'  | '
+			+SYN_array_ping[3][2]+'  | '
+			+SYN_array_ping[3][3]+'  | '
+			+SYN_array_ping[3][4]+'  |\n')
 
 	sys.stdout.write('\r \033[K \r')
-
 
 	sys.stdout.flush()
 
@@ -456,33 +295,46 @@ def assetmonitor(): #Here Randy
 		logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[0])
 		logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[1])
 
-
     def serviceUpdate(team):
 	
 	global gridHeight
 	global SYN_array
 
-	IP = '172.16.2.85'
+	#IP = '192.168.0.7'
+	IP = '127.0.0.1'
 
 	while(1):
-	    for service in range(0, len(SYN_array[team])):
+	    for service in range(0, len(SYN_array_IP[team])):
+		#check = os.popen('ping -c 1 -w 1 %s' %SYN_array_IP[team][service]).read()
 		check = os.popen('ping -c 1 -w 1 %s' %IP).read()
 		if '1 received' in check:
-		    SYN_array[team][service] = bcolors.OKGREEN+re.split('time=',check)[1][1:5]+bcolors.ENDC
+		    SYN_array_ping[team][service] = bcolors.OKGREEN+re.split('time=',check)[1][1:5]+bcolors.ENDC
 		else:
-		    SYN_array[team][service] = bcolors.FAIL+'----'+bcolors.ENDC
+		    SYN_array_ping[team][service] = bcolors.FAIL+'----'+bcolors.ENDC
 	    
 	    time.sleep(1)
+
+    def ipdbParse():
+	global ipdb
+	serviceNames = ['HTTP','HTTPS','SSH','FTP','PING']
+	services     = ['w', 'ws', 's', 'f', 't']
+	servicesMap  = {'w':0,'ws':1,'s':2,'f':3,'t':4}
+	teamMap      = {'c':0,'h':1,'k':2,'s':3}
+
+	for i in range(0, len(ipdb)):
+	    if ipdb[i][2] in services:
+		SYN_array_IP[teamMap[ipdb[i][1]]][servicesMap[ipdb[i][2]]] = ipdb[i][4]
 
 
     os.system('setterm -cursor off')
 
+    ipdbParse()
     newThread = Thread(target = activityUpdate, args = ())
     newThread.daemon = True
     newThread.start()
     newThread.join()
 
-    for i in range(0, len(SYN_array)):
+    for i in range(0, len(SYN_array_IP)):
 	newThread = Thread(target = serviceUpdate, args = (i,))
 	newThread.daemon = True
 	newThread.start()
@@ -494,45 +346,6 @@ def assetmonitor(): #Here Randy
 	except KeyboardInterrupt:
 	    os.system('setterm -cursor on')
 	    exit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 def sshinit(uname,ipaddress):
     asstat = pexpect.spawn("ssh %s@%s" %(uname,ipaddress))
