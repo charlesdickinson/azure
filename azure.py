@@ -19,7 +19,7 @@ global flag
 flag = 'Syndicasia'
 
 ipdb = [
-    ['b', 'f', 'baffle', '192.168.56.2']
+    ['b', 'f', 'baffle', '192.169.0.13']
 ]
 
 nameSet = ['ANGEL',   
@@ -147,7 +147,6 @@ def ipupdate():
     global ipdb
     try:
         ipdb = sshlist('baffle', "ipdb.txt")
-        print ipdb
     except:
         print '\nHad a bad time connecting, squire!\n'
 
@@ -179,8 +178,7 @@ def pwdlookup(service):
     return False
         
 def assetmonitor(): #Here Randy
-    assetlist = sshlist('baffle', '~/assets.txt')
-
+    assetlist = sshlist('baffle', 'assets.txt')
     class bcolors:
 	HEADER    = '\033[95m'
 	OKBLUE    = '\033[94m'
@@ -284,26 +282,26 @@ def assetmonitor(): #Here Randy
 
 	global logArray
 
-	for i in range(0, len(assetlist)):
-	    nameList[nameMap[assetlist[i][0]]].append(str(assetlist[i][1]+'-'+assetlist[i][2]))
+	while(1):
+	    for i in range(0, len(assetlist)):
+		nameList[nameMap[assetlist[i][0]]].append(str(assetlist[i][1]+'-'+assetlist[i][2]))
 
-	for i in range(0, len(logArray)):
-	    if len(nameList[i]) > 0:
-		logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[0])
-		logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[1])
+	    for i in range(0, len(logArray)):
+		if len(nameList[i]) > 0:
+		    logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[0])
+		    logArray[i].append(re.split('-',nameList[i][len(nameList[i])-1])[1])
+
+	    time.sleep(1)
 
     def serviceUpdate(team):
 	
 	global gridHeight
 	global SYN_array
 
-	#IP = '192.168.0.7'
-	IP = '127.0.0.1'
-
 	while(1):
 	    for service in range(0, len(SYN_array_IP[team])):
-		#check = os.popen('ping -c 1 -w 1 %s' %SYN_array_IP[team][service]).read()
-		check = os.popen('ping -c 1 -w 1 %s' %IP).read()
+		check = os.popen('ping -c 1 -w 1 %s' %SYN_array_IP[team][service]).read()
+		#check = os.popen('ping -c 1 -w 1 127.0.0.1').read()
 		if '1 received' in check:
 		    SYN_array_ping[team][service] = bcolors.OKGREEN+re.split('time=',check)[1][1:5]+bcolors.ENDC
 		else:
@@ -319,17 +317,17 @@ def assetmonitor(): #Here Randy
 	teamMap      = {'c':0,'h':1,'k':2,'s':3}
 
 	for i in range(0, len(ipdb)):
-	    if ipdb[i][2] in services:
-		SYN_array_IP[teamMap[ipdb[i][1]]][servicesMap[ipdb[i][2]]] = ipdb[i][4]
+	    if ipdb[i][1] in services and ipdb[i][0] != 'b':
+		SYN_array_IP[teamMap[ipdb[i][0]]][servicesMap[ipdb[i][1]]] = ipdb[i][3]
 
 
     os.system('setterm -cursor off')
 
     ipdbParse()
+
     newThread = Thread(target = activityUpdate, args = ())
     newThread.daemon = True
     newThread.start()
-    newThread.join()
 
     for i in range(0, len(SYN_array_IP)):
 	newThread = Thread(target = serviceUpdate, args = (i,))
@@ -343,15 +341,6 @@ def assetmonitor(): #Here Randy
 	except KeyboardInterrupt:
 	    os.system('setterm -cursor on')
 	    exit()
-
-def sshinit(uname,ipaddress):
-    asstat = pexpect.spawn("ssh %s@%s" %(uname,ipaddress))
-    i = asstat.expect(['No route to host', 'synprac'])
-    if i == 0:
-        print ('Network connectivity issue!')
-        asstat.kill(0)
-    elif i == 1:
-        return asstat
     
 def sshlist(service,filepath):
     session = pxssh.pxssh()
@@ -631,9 +620,7 @@ def services ():
         os.system("mumble &")
     elif choice == '4':
         os.system("xchat &")
-    
-    
-    
+
 def lookup ():
     global ipdb
     os.system("clear")
@@ -826,6 +813,7 @@ os.system ("clear")
 print 'Azure, the Syndicasian Information Assurance Suite'
 privatekey()
 print ('Welcome %s! Good hunting.\n' %identity.upper())
+ipupdate()
 choice = '0'
 while choice != 'q':
     choice = menu()
