@@ -385,7 +385,25 @@ def decrypt (filepath):
     
 def services ():
     os.system("clear")
-    print 'Services like FTP, Web, IRC and boring stuff like that\n'
+    print 'Select a type of service below:'
+    print '1) FTP'
+    print '2) SSH'
+    print '3) Mumble'
+    print '4) IRC'
+    choice = raw_input("Enter your selection: ")
+    if choice == '1':
+        os.system("nautilus sftp://%s@%s" %(unamelookup('baffle'),iplookup('baffle')))
+    elif choice == '2':
+        target = raw_input("Enter your target (ie. baffle): ")
+        print "Press Ctrl + D to return. Sudo password is " + pwdlookup(target)
+        session = pexpect.spawn('ssh %s@%s' %(unamelookup(target), iplookup(target)))
+        session.interact()
+    elif choice == '3':
+        os.system("mumble &")
+    elif choice == '4':
+        os.system("xchat &")
+    
+    
     
 def lookup ():
     global ipdb
