@@ -1,0 +1,56 @@
+Good morning Syndicasian!
+
+This is an instruction document to connect into AQUANET communications with Azure.
+Do you not have Azure? You should get it. It has the encryption module and allows you to encrypt/decrypt passwords.
+
+To connect to AQUANET you must have the VPN client.
+1)	Install it with $sudo apt-get install network-manager-vpnc
+2)	Go to Configure VPNs and add a Cisco compatible VPN
+3)	You need to make 4 AQUANET connections. Name them as follows and give them the following gateway IP:
+		AQUANET-1	10.0.1.13	Centuriones
+		AQUANET-2	10.0.1.10	Haxstreet
+		AQUANET-3	10.0.1.11	Kairos
+		AQUANET-4	10.0.1.12	Shell
+4)	For each VPN, give them the group name remotes. The group password is in your keychain in Azure and is cnvpn, haxvpn etc
+5)	Your username is your callsign and your password is in your keychain under vpn
+
+Once connected to AQUANET you should connect to Mumble. Mumble is great.
+1)	Open Mumble. You can press the button or type $mumble
+2)	Hit Connect or press the little globe to add a server
+3)	The AQUANET Mumble server is chat.aqua.ace or 192.169.0.16 and the password, when it asks for it, is in your keychain
+
+As well, when connected to AQUANET, you should get on IRC.
+1)	Open Xchat. Press the button or type $xchat
+2)	In the Server List at the top, add a server.
+3)	The servername for secure IRC is irc.aqua.ace with default port
+4)	Join a channel by typing /join #channel
+5)	Awesome channels are: #syn_hq, #syn_intel, #syn_isr, #syn_white_cell
+6)	If you want to make an empty channel just type /join <thatchannel>
+7)	To see a list of channels, type /channel
+
+To get at shared files, use the AQUANET SFTP server.
+1)	Open Azure > Services > FTP. This will open a pretty file browser.
+or
+1)	Type $sftp name@ftp.aqua.ace
+2)	Fill out your credentials from the keychain. The service is called baffle
+
+CONTINGENCIES
+
+If you get disconnected from AQUANET:
+1)	Try to reconnect
+2)	See if your podmates can connect. If they can then contact a NETCON dude through them.
+3)	If none of you can connect, try connecting to the next AQUANET.
+4)	Wait in the next AQUANET (AQUANET-2 first) for 5 minutes. If joined by other people, everyone happy.
+5)	If nobody joins the network, try AQUANET-1 then AQUANET-3.
+6)	Try all the AQUANET and bunch together in Mumble where you find people.
+
+If nobody is able to access AQUANET:
+1)	Netcon will move Mumble to a public server.
+2)	To connect, try accessing 192.168.24.16 then 192.168.40.16 then 192.168.48.16 then 192.168.36.16
+3)	If there are no Mumble servers up on any of these services, Charlie will put one up on his laptop. Try 10.0.1.76 first, then Zenmap 10.0.1.* for something on port 64738.
+4)	Access a public IRC server. This will be on 192.168.24.15 or 192.168.40.15 or 192.168.36.15. Default channel is #syndicasia
+5)	If on a public IRC server, assume everything you are saying is being eavesdropped. Use codenames, figure out who is speaking, be a massive arsehole with suspicion
+
+If you have no network connectivity at all:
+1)	Keep an eye on WiFi. I shall attempt to create an adhoc network to you through the shoulder mounted device.
+2)	Stay strong. We shall find you.
